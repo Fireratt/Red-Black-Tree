@@ -4,19 +4,19 @@
 
 
 //////////////////////////////////////////////////////////////////////////
-//  1  结点定义			_rbTreeNode
-//  2  红黑树类声明		rbtree
-//  3  红黑树类成员定义 
-//  4  测试程序			main()
+//  1  ?????			_rbTreeNode
+//  2  ???????????		rbtree
+//  3  ????????????? 
+//  4  ???????			main()
 //////////////////////////////////////////////////////////////////////////
 
 
 #define __TEST__
 
 //////////////////////////////////////////////////////////////////////////
-//  1  结点定义			_rbTreeNode
+//  1  ?????			_rbTreeNode
 //////////////////////////////////////////////////////////////////////////
-
+using namespace std ; 
 template <class T>
 class rbtree;
 
@@ -36,7 +36,7 @@ private:
 
 
 //////////////////////////////////////////////////////////////////////////
-//  2  红黑树类声明		rbtree
+//  2  ???????????		rbtree
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -71,14 +71,14 @@ private:
 	
 	_rbTreeNode<T>* treeSuccessor(  _rbTreeNode<T> * );
 	
-	_rbTreeNode<T> *nil;			//空结点
+	_rbTreeNode<T> *nil;			//????
 	_rbTreeNode<T> *root;
 
 };
 
 
 //////////////////////////////////////////////////////////////////////////
-//  3  红黑树类成员定义 
+//  3  ????????????? 
 //////////////////////////////////////////////////////////////////////////
 
 
@@ -157,7 +157,8 @@ void rbtree<T>::leftRotate( _rbTreeNode<T> *x ){		// x->right != nil
 	}
 	y->p = x->p;
 	x->right = y->left;
-	y->left->p = x;
+	if(y->left)
+		y->left->p = x;
 	y->left = x;
 	x->p = y;
 }
@@ -175,7 +176,8 @@ void rbtree<T>::rightRotate( _rbTreeNode<T> *x ){
 	}
 	y->p = x->p;
 	x->left = y->right;
-	y->right->p = x;
+	if(y->right)
+		y->right->p = x;
 	y->right = x;
 	x->p = y;
 }
@@ -280,32 +282,37 @@ void rbtree<T>::rbDeleteFixup(_rbTreeNode<T> * x){
 				}
 				w->color = x->p->color;
 				x->p->color = false;
-				w->right->color = false;
+				if(w->right)
+					w->right->color = false;
 				leftRotate( x->p );
 				x = root;
 			}
 		}
 		else{
 			w = x->p->left;
+			
 			if( w->color == true ){
 				w->color = false;
 				x->p->color = true;
 				rightRotate( x->p );
 				w = x->p->left;
 			}
-			if( w->right->color == false && w->left->color == false ){
+			// repair the problem that right may be 0 (it will be regarded as black)
+			if( (w->right == 0||w->right->color == false) && (w->left == 0 || w->left->color == false) ){
 				w->color = true;
 				x = x->p;
 			}
 			else{
-				if( w->left->color == false ){
-					w->right->color = false;
+				if(w->left == 0 ||w->left->color == false ){
+					if(w->right)
+						w->right->color = false;
 					w->color = true;
 					leftRotate( w );
 					w = x->p->left;
 				}
 				w->color = x->p->color;
 				x->p->color = false;
+				if(w->left)
 				w->left->color = false;
 				rightRotate( x->p );
 				x = root;
@@ -360,30 +367,6 @@ void rbtree<T>::_display( _rbTreeNode<T> * x ){
 
 
 //////////////////////////////////////////////////////////////////////////
-//  4  测试程序			main()
+//  4  ???????			main()
 //////////////////////////////////////////////////////////////////////////
 
-
-#include<iostream>
-#include<ctime>
-
-using namespace std;
-
-const int N = 15;
-
-int main(){
-	rbtree<int> test;
-	srand( (unsigned)time(NULL) );
-	srand( rand() );
-	srand( rand() );
-	for( int i = 0; i != N; ++i ){
-		test.insert( rand() );
-	}
-	int a;
-	test.display();
-	while( cin >> a ){
-		test.erase( a );
-		test.display();
-	}
-	return 0;
-}
